@@ -1,11 +1,11 @@
 from tkinter import *
-from tkinter import font
+from tkinter import font,messagebox as ms
 import tkinter
 from PIL import ImageTk, Image 
 import random,time
-from tkinter import messagebox as ms
 import socket
-
+from matplotlib.pyplot import text
+import pandas as pd
 
 app = Tk()
 app.title("Generador de ZPL")
@@ -55,14 +55,11 @@ idBatch = StringVar()
 #sidtextConstante = StringVar()
 
 
-
-
 def limpiar():
     idWO.set("")
     idPN.set("")
     idBatch.set("")
     
-
 def limpiarBox():
     pass
 
@@ -91,8 +88,6 @@ def surprise():
     Bnsp3 = Button(sp,text="Adios!", command= sp.destroy)
     Bnsp3.place(x=200,y=105)
 
-
-
 def mostrarInfo():
     lBox.insert(END,textConstante.replace('{idWO}',WO.get()).replace('{idPN}',PN.get()).replace('{idBatch}',BT.get()))
     mostrarInfoConsole()
@@ -100,7 +95,7 @@ def mostrarInfo():
 
 def mostrarInfoConsole():
     print(str(textConstante.replace('{idWO}',WO.get()).replace('{idPN}',PN.get()).replace('{idBatch}',BT.get())    ))
-    limpiar()
+    
 
 def cambiarColor():  
     color = "%06x" % random.randint(0, 0xFFFFFF)
@@ -114,26 +109,36 @@ def times():
     clock.config(text=current_time,bg="#314252",fg="red",font="Helvetica 10 bold")
     clock.after(200,times)
 
-
 def SendZPLFile():
-    TCP_IP = '10.42.42.52/zpl'
-    TCP_PORT = 9100
-    BUFFER_SIZE = 1024
-    FORMAT = mostrarInfo
-    PRINT = mostrarInfo
+    mysocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)        
+    host = "10.42.1.53"
+    port = 9100  
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((TCP_IP, TCP_PORT))
-    s.send(FORMAT)
-    s.send(PRINT)
-    data = s.recv(BUFFER_SIZE)
-    s.close()
+    try:          
+        mysocket.connect((host, port)) #connecting to host
+        mysocket.send(b"^XA^A0N,50,50^FO50,50^FDSocket Test^FS^XZ")#using bytes
+        mysocket.close () #closing connection
+        ms.showinfo(title="Send", text="Enviado")
+    except:
+        print("Error with the connection")
+        raise ms.showinfo("Error","ZPL was not send to the printer, please validate the folowing option \n\nValidate the connection printer \nValidate ZPL format \nIf this problem continues please notify the System Department")
 
-    print ("received data:", data)
+def DownLoad():
+    try:          
+        dt = (str(textConstante.replace('{idWO}',WO.get()).replace('{idPN}',PN.get()).replace('{idBatch}',BT.get())    ))
+        fb = [dt]
+        lista = [fb]
 
-#l2=Label(text="lorem lorem lorem lorem lorem lorem lorem lore mlorem lorem").place(x=50, y=10)
+        lista2 = pd.DataFrame(lista,
+                                columns=['Testing1'])
+        lista2.to_excel('C:\\Users\\yair.carvajal\\Desktop\\hellow.xlsx', index=False)
+        ms.showinfo("Successfully","Excel is Created")
+    except:
+        ms.showwarning(title="Error", message="Excel is not Created \n\nPlease validate if you do not have your file open")
 
+    limpiar()
 
+####  Frame  ####
 
 LabelWO =Label(text="WO").place(x=20,y=30)
 WO = Entry(text="Introduzca WorkORder", textvariable=idWO)
@@ -185,7 +190,9 @@ menubar = Menu(app)
 app.config(menu=menubar)
 
 filemenu = Menu(menubar, tearoff=0)
+
 filemenu.add_command(label="SendZpl", command=SendZPLFile)
+filemenu.add_command(label="DownLoad", command=DownLoad)
 
 
 menubar.add_cascade(label="Archivo", menu=filemenu)
