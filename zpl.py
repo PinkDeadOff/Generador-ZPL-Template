@@ -131,7 +131,7 @@ def DownLoad():
 
         lista2 = pd.DataFrame(lista,
                                 columns=['Testing1'])
-        lista2.to_excel('C:\\Users\\yair.carvajal\\Desktop\\hellow.xlsx', index=False)
+        lista2.to_excel('hellow.xlsx', index=False)
         ms.showinfo("Successfully","Excel is Created")
     except:
         ms.showwarning(title="Error", message="Excel is not Created \n\nPlease validate if you do not have your file open")
