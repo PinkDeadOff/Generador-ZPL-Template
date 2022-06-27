@@ -96,7 +96,6 @@ def mostrarInfo():
 def mostrarInfoConsole():
     print(str(textConstante.replace('{idWO}',WO.get()).replace('{idPN}',PN.get()).replace('{idBatch}',BT.get())    ))
     
-
 def cambiarColor():  
     color = "%06x" % random.randint(0, 0xFFFFFF)
     app.configure({"background": "#" + color})
@@ -125,13 +124,13 @@ def SendZPLFile():
 
 def DownLoad():
     try:          
-        dt = (str(textConstante.replace('{idWO}',WO.get()).replace('{idPN}',PN.get()).replace('{idBatch}',BT.get())    ))
-        fb = [dt]
-        lista = [fb]
+        zplTemplate = (str(textConstante.replace('{idWO}',WO.get()).replace('{idPN}',PN.get()).replace('{idBatch}',BT.get())    ))
+        listZPL = [zplTemplate]
+        lista = [listZPL]
 
         lista2 = pd.DataFrame(lista,
                                 columns=['Testing1'])
-        lista2.to_excel('hellow.xlsx', index=False)
+        lista2.to_excel('C:\\Users\\yair.carvajal\\Desktop\\hellow.xlsx', index=False)
         ms.showinfo("Successfully","Excel is Created")
     except:
         ms.showwarning(title="Error", message="Excel is not Created \n\nPlease validate if you do not have your file open")
@@ -153,7 +152,6 @@ LabelBT =Label(text="Batch").place(x=20,y=90)
 BT = Entry(text="Introduzca Batch", textvariable=idBatch)
 BT.place(x=100,y=90)
 
-
 BnStart = Button(text="Start",command=mostrarInfo ).place(x=100,y=120)
 
 BnClear = Button(text="Clear",command=limpiar)
@@ -165,7 +163,7 @@ BnExist = Button(text="Exit",command=quit)
 BnExist.place(x=550,y=220)
 BnExist.config(background="Red")
 
-
+#ListBox
 lBox = Listbox(app,justify= "center")
 lBox.config(width=40,height=11)
 lBox.place(x=300, y=30)
@@ -178,14 +176,12 @@ scrollbarH = Scrollbar(app, orient=HORIZONTAL,command=lBox.xview)
 scrollbarH.place(x=300,y=210)
 lBox['xscrollcommand'] = scrollbarH.set
 
-
+#Clock
 clock=Label(app,font=("times",10,"bold"))
 clock.place(x=20,y=220)
 times()
 
-
-
-
+#MenuBar
 menubar = Menu(app)
 app.config(menu=menubar)
 
